@@ -12,6 +12,7 @@ import init, {
   get_region_scores,
   next_player,
 } from "./wasm-lib/pkg/wasm_lib.js";
+import BouncingImages from "./BouncingImages";
 
 const PLAYER_COLORS = ["#2ecc40", "#0074d9", "#ff4136", "#ffd700"];
 const PLAYER_NAMES = ["Green", "Blue", "Red", "Yellow"];
@@ -57,7 +58,10 @@ function App() {
   const [currentPlayer, setCurrentPlayer] = useState(0);
   const [winner, setWinner] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showSetupOptions, setShowSetupOptions] = useState(true);
+  const [showSetupOptions, setShowSetupOptions] = useState(false);
+  const [showHomepage, setShowHomepage] = useState(true);
+  const [showRules, setShowRules] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const [setup, setSetup] = useState(false);
   const [tokens, setTokens] = useState(getDefaultTokens(2, 2));
   const [setupTokens, setSetupTokens] = useState(getDefaultTokens(2, 2));
@@ -184,7 +188,9 @@ function App() {
   async function handleReset() {
     const state = reset_game();
     setFromBackend(state);
-    setShowSetupOptions(true);
+    setShowHomepage(true);
+    setShowRules(false);
+    setShowAbout(false);
     setSetup(false);
     setSetupTransitioned(false);
   }
@@ -223,10 +229,273 @@ function App() {
     return <div>Loading WASM...</div>;
   }
 
+  function handleHomepagePlay(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setShowSetupOptions(true);
+    setShowHomepage(false);
+  }
+
+  function handleHomepageRules(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setShowRules(true);
+    setShowHomepage(false);
+  }
+
+  function handleHomepageAbout(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setShowAbout(true);
+    setShowHomepage(false);
+  }
+
+  // In the setup options form:
+  if (showHomepage) {
+    return (
+      <main className="container">
+        <BouncingImages />
+        <div
+          style={{
+            position: "absolute",
+            backgroundColor: "rgba(255, 255, 255, 0)", // semi-transparent black
+            padding: "12px 20px",
+            borderRadius: "40px",
+            color: "black",
+            zIndex: 10, // higher than bouncing images
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <h1
+            style={{
+              marginTop: "clamp(3rem, 10vh, 4rem)",
+              fontSize: "clamp(1.5rem, 8vh, 5rem)",
+            }}
+          >
+            Wall Go
+          </h1>
+
+          <form
+            onSubmit={handleHomepagePlay}
+            style={{
+              width: "clamp(5rem, 15vw, 10rem)",
+              height: "10vh",
+              marginTop: "clamp(2.7rem, 5vh, 4rem)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "clamp(1rem, 3vh, 10rem)"
+              }}
+            >
+              Play
+            </button>
+          </form>
+
+          <form
+            onSubmit={handleHomepageRules}
+            style={{
+              width: "clamp(5rem, 15vw, 10rem)",
+              height: "10vh",
+              marginTop: "clamp(2.7rem, 1vh, 4rem)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "clamp(1rem, 3vh, 10rem)"
+              }}
+            >
+              Rules
+            </button>
+          </form>
+
+          <form
+            onSubmit={handleHomepageAbout}
+            style={{
+              width: "clamp(5rem, 15vw, 10rem)",
+              height: "10vh",
+              marginTop: "clamp(2.7rem, 5vh, 4rem)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "clamp(1rem, 3vh, 10rem)"
+              }}
+            >
+              About
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
+
+  // Rules page
+  if (showRules) {
+    return (
+      <main className="container">
+        <BouncingImages />
+        <div
+          style={{
+            position: "absolute",
+            backgroundColor: "rgba(255, 255, 255, 0)", // semi-transparent black
+            padding: "12px 20px",
+            borderRadius: "40px",
+            color: "black",
+            fontSize: "1rem",
+            zIndex: 10, // higher than bouncing images
+            // width: "50vw",
+            // height: "80vh",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <h1
+            style={{
+              marginTop: "clamp(3rem, 10vh, 4rem)",
+              fontSize: "clamp(1.5rem, 8vh, 5rem)",
+            }}
+          >
+            Rules
+          </h1>
+
+          <form
+            onSubmit={handleReset}
+            style={{
+              width: "clamp(5rem, 15vw, 10rem)",
+              height: "10vh",
+              marginTop: "clamp(2.7rem, 5vh, 4rem)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "clamp(1rem, 3vh, 10rem)"
+              }}
+            >
+              RULES ARE THESE:
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
+
+  // About page
+  if (showAbout) {
+    return (
+      <main className="container">
+        <BouncingImages />
+        <form
+            onSubmit={handleReset}
+            style={{
+              width: "clamp(5rem, 15vw, 10rem)",
+              height: "10vh",
+              // marginTop: "clamp(2.7rem, 5vh, 4rem)",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+              top: "0vh",
+              left: "2vw",
+              zIndex: 20,
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "clamp(1rem, 3vh, 10rem)",
+
+              }}
+            >
+              Back
+            </button>
+          </form>
+        <div
+          style={{
+            position: "absolute",
+            backgroundColor: "rgba(255, 255, 255, 0)", // semi-transparent black
+            padding: "12px 20px",
+            borderRadius: "40px",
+            color: "black",
+            fontSize: "1rem",
+            zIndex: 10, // higher than bouncing images
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            // justifyContent: "center",
+          }}
+        >
+          <h1
+            style={{
+              marginTop: "clamp(3rem, 10vh, 20rem)",
+              fontSize: "clamp(1.5rem, 8vh, 5rem)",
+            }}
+          >
+            About
+          </h1>
+          <p
+            style={{
+              width: "80vw",
+              height: "60vh",
+              // marginTop: "clamp(2.7rem, 5vh, 4rem)",
+              backgroundColor: "rgba(255, 255, 255, 1)",
+              borderRadius: "8px",
+              top: "0vh",
+              left: "2vw",
+              zIndex: 20,
+            }}
+          >
+            Wall Go is a strategic board game for 2-4 players. The objective is to control the most territory by placing pieces and walls on the board.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   // Setup options form
   if (showSetupOptions) {
     return (
       <main className="container">
+        <BouncingImages />
         <h1>Wall Go Setup Options</h1>
         <form onSubmit={handleSetupOptionsSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
           <div style={{ marginBottom: 16 }}>
@@ -316,11 +585,36 @@ function App() {
     }
     return (
       <main className="container">
+        <BouncingImages />
         <h1>Wall Go Setup</h1>
         <div style={{ marginTop: 0 }}>
           <h2>Setup Phase</h2>
           <div style={{ marginBottom: 0 }}>
             Current Player: <span style={{ color: PLAYER_COLORS[setupTurn], fontWeight: "bold" }}>{PLAYER_NAMES[setupTurn]}</span>
+          </div>
+          {/* Tokens left per player - now directly under the board */}
+          <div style={{ marginTop: 16 }}>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              <div style={{
+                  marginTop: 0,
+                  display: "inline-block",
+                  marginRight: "16px",
+                }}
+                >Tokens Left:</div>
+              {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
+                <li
+                  key={name}
+                  style={{
+                    color: PLAYER_COLORS[idx],
+                    fontWeight: "bold",
+                    display: "inline-block",
+                    marginRight: "16px",
+                  }}
+                >
+                  {name}: {setupTokens[idx]}
+                </li>
+              ))}
+            </ul>
           </div>
           <div
             style={{
@@ -364,10 +658,10 @@ function App() {
                       <image
                         key={`setup-piece-${rowIdx}-${colIdx}`}
                         href={PLAYER_IMAGES[cell]}
-                        x={colIdx + 0.1}
-                        y={rowIdx + 0.1}
-                        width={0.8}
-                        height={0.8}
+                        x={colIdx + 0.15}
+                        y={rowIdx + 0.15}
+                        width={0.7}
+                        height={0.7}
                         style={{
                           pointerEvents: "none",
                           userSelect: "none"
@@ -419,24 +713,10 @@ function App() {
               </svg>
             </div>
           </div>
-          {/* Tokens left per player - now directly under the board */}
-          <div style={{ marginTop: 16 }}>
-            <h3 style={{ marginTop: 0 }}>Tokens Left</h3>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-              {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
-                <li
-                  key={name}
-                  style={{
-                    color: PLAYER_COLORS[idx],
-                    fontWeight: "bold",
-                    marginBottom: 8,
-                  }}
-                >
-                  {name}: {setupTokens[idx]}
-                </li>
-              ))}
-            </ul>
-          </div>
+        </div>
+        {/* Reset Button */}
+        <div style={{ marginBottom: 24 }}>
+          <button onClick={handleReset}>Reset Game</button>
         </div>
       </main>
     );
@@ -446,6 +726,7 @@ function App() {
   const size = parseInt(boardSize, 10) || 7;
   return (
     <main className="container">
+      <BouncingImages />
       <h1>Wall Go</h1>
       {loading ? (
         <div>Loading...</div>
@@ -479,6 +760,37 @@ function App() {
               </span>
             )}
           </div>
+          {/* Final Scores Panel */}
+          {winner != null && (
+            <div
+              style={{
+                width: "90vmin",
+                display: "inline-block",
+                background: "#fff",
+                border: "2px solid #333",
+                borderRadius: 8,
+                padding: "16px 20px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                marginLeft: 0,
+              }}
+            >
+              <h3 style={{ marginTop: 0 }}>Final Scores</h3>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
+                  <li
+                    key={name}
+                    style={{
+                      color: PLAYER_COLORS[idx],
+                      fontWeight: "bold",
+                      marginBottom: 8,
+                    }}
+                  >
+                    {name}: {regionScores[idx] ?? 0}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div style={{ margin: "12px 0", fontWeight: "bold", fontSize: 18 }}>
             {winner != null ? null :
               wallPending ? "Place a wall" :
@@ -557,10 +869,10 @@ function App() {
                       <image
                         key={`piece-${rowIdx}-${colIdx}`}
                         href={PLAYER_IMAGES[cell]}
-                        x={colIdx + 0.1}
-                        y={rowIdx + 0.1}
-                        width={0.8}
-                        height={0.8}
+                        x={colIdx + 0.15}
+                        y={rowIdx + 0.15}
+                        width={0.7}
+                        height={0.7}
                         className={
                           !wallPending &&
                           phase === "main" &&
@@ -724,35 +1036,6 @@ function App() {
                   )}
               </svg>
             </div>
-            {winner != null && (
-              <div
-                style={{
-                  minWidth: 180,
-                  background: "#fff",
-                  border: "2px solid #333",
-                  borderRadius: 8,
-                  padding: "16px 20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                  marginLeft: 0,
-                }}
-              >
-                <h3 style={{ marginTop: 0 }}>Final Scores</h3>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                  {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
-                    <li
-                      key={name}
-                      style={{
-                        color: PLAYER_COLORS[idx],
-                        fontWeight: "bold",
-                        marginBottom: 8,
-                      }}
-                    >
-                      {name}: {regionScores[idx] ?? 0}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
           <div style={{ marginBottom: 24 }}>
             <button onClick={handleReset}>Reset Game</button>
