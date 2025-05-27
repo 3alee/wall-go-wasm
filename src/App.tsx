@@ -78,8 +78,6 @@ function App() {
   const [validMoves, setValidMoves] = useState<{ row: number; col: number }[]>([]);
   const [validMovesSource, setValidMovesSource] = useState<{ row: number; col: number } | null>(null);
   const [regionScores, setRegionScores] = useState([]);
-  const [selectedRow, setSelectedRow] = useState<number | null>(null);
-  const [selectedCol, setSelectedCol] = useState<number | null>(null);
 
   function setFromBackend(state: any) {
     if (typeof state.board_size === "number") setBoardSize(String(state.board_size));
@@ -212,8 +210,6 @@ function App() {
     setShowSetupOptions(false);
     setSetup(true);
     setSetupTransitioned(false);
-    setSelectedRow(null);
-    setSelectedCol(null);
   }
 
   // Responsive SVG style
@@ -357,25 +353,9 @@ function App() {
         <BouncingImages />
         <div
           style={{
-            position: "absolute",
-            backgroundColor: "rgba(255, 255, 255, 0)", // semi-transparent black
-            padding: "12px 20px",
-            borderRadius: "40px",
-            color: "black",
-            fontSize: "1rem",
-            zIndex: 10, // higher than bouncing images
-            // width: "50vw",
-            // height: "80vh",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
           }}
         >
           <h1
@@ -405,7 +385,7 @@ function App() {
                 fontSize: "clamp(1rem, 3vh, 10rem)"
               }}
             >
-              RULES ARE THESE:
+              TO BE WRITTEN:
             </button>
           </form>
         </div>
@@ -476,15 +456,26 @@ function App() {
             style={{
               width: "80vw",
               height: "60vh",
-              // marginTop: "clamp(2.7rem, 5vh, 4rem)",
-              backgroundColor: "rgba(255, 255, 255, 1)",
-              borderRadius: "8px",
-              top: "0vh",
-              left: "2vw",
-              zIndex: 20,
+              background: "#fff",
+              border: "2px solid #333",
+              borderRadius: "20px",
+              padding: "16px 20px",
+              boxShadow: "0 2px 8px rgba(0,0,0,1)",
+              textAlign: "left",
             }}
           >
-            Wall Go is a strategic board game for 2-4 players. The objective is to control the most territory by placing pieces and walls on the board.
+            Season 2 of the South Korean reality game show <strong>"Devil's Plan"</strong> introduced a simple variation on the
+            game Go, aptly named <strong>Wall Go</strong>. For fans out there who are interested in trying out the game for
+            themselves, I have developed both a <strong>playable online version</strong>, and a <strong>downloadable cross-platform
+             app</strong>.
+            <br /><br />
+            The <strong>desktop app</strong> I've created was made using React, Rust and Tauri, and is downloadable for MacOS, Linus and Windows. I
+            have personally tested out the MacOS and Windows builds, though the Linux one should work regardless.  <br />
+            The <strong>online version</strong> is a WebAssembly port of the same Rust code, and should work on any modern browser.
+            <ul>
+              <li><a href="https://3alee.github.io/wall-go-wasm/" target="_blank" rel="noopener noreferrer">(Online version) https://3alee.github.io/wall-go-wasm/</a>.</li>
+              <li><a href="https://github.com/3alee/Wall-Go/releases" target="_blank" rel="noopener noreferrer">(App version) https://github.com/3alee/Wall-Go/releases</a>.</li>
+            </ul>
           </p>
         </div>
       </main>
@@ -496,17 +487,50 @@ function App() {
     return (
       <main className="container">
         <BouncingImages />
-        <h1>Wall Go Setup Options</h1>
-        <form onSubmit={handleSetupOptionsSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
-          <div style={{ marginBottom: 16 }}>
-            <label>
+        <div
+          className="container-rounded-bordered"
+          style={{
+            width: "clamp(20rem, 40vw, 60rem)",
+            height: "clamp(30rem, 80vh, 45rem)",
+            margin: "5vh auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            border: "2px solid #333",
+            borderRadius: "20px",
+            padding: "clamp(1rem, 2vw, 2rem)",
+            boxSizing: "border-box",
+            overflow: "auto", // scroll if needed
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
+              textAlign: "center",
+              marginBottom: "clamp(1rem, 2vh, 2rem)",
+            }}
+          >
+            Wall Go Setup Options
+          </h1>
+          <form
+            onSubmit={handleSetupOptionsSubmit}
+            style={{
+              width: "100%",
+              maxWidth: "30rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "clamp(1rem, 3vh, 2rem)",
+              fontSize: "clamp(1rem, 2.5vh, 1.5rem)",
+            }}
+          >
+            <label style={{ display: "flex", justifyContent: "space-between" }}>
               Board Size:
               <input
                 type="number"
                 min={5}
                 max={15}
                 value={boardSize}
-                onChange={e => {
+                onChange={(e) => {
                   const raw = e.target.value;
                   if (raw === "") {
                     setBoardSize("");
@@ -514,37 +538,43 @@ function App() {
                   }
                   setBoardSize(raw);
                 }}
-                style={{ width: 60, marginLeft: 8 }}
+                style={{
+                  width: "clamp(3rem, 8vw, 5rem)",
+                  marginLeft: "1rem",
+                  fontSize: "inherit",
+                }}
               />
             </label>
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <label>
+
+            <label style={{ display: "flex", justifyContent: "space-between" }}>
               Number of Players:
               <input
                 type="number"
                 min={2}
                 max={4}
                 value={numPlayers}
-                onChange={e => {
+                onChange={(e) => {
                   const n = parseInt(e.target.value, 10);
                   setNumPlayers(n);
                   setTokens(getDefaultTokens(n, Number(piecesPerPlayer) || 1));
                   setSetupTokens(getDefaultTokens(n, Number(piecesPerPlayer) || 1));
                 }}
-                style={{ width: 60, marginLeft: 8 }}
+                style={{
+                  width: "clamp(3rem, 8vw, 5rem)",
+                  marginLeft: "1rem",
+                  fontSize: "inherit",
+                }}
               />
             </label>
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <label>
-              Pieces per player:
+
+            <label style={{ display: "flex", justifyContent: "space-between" }}>
+              Pieces per Player:
               <input
                 type="number"
                 min={1}
                 max={boardSize === "" ? 15 : Number(boardSize)}
                 value={piecesPerPlayer}
-                onChange={e => {
+                onChange={(e) => {
                   const raw = e.target.value;
                   if (raw === "") {
                     setPiecesPerPlayer("");
@@ -552,12 +582,27 @@ function App() {
                   }
                   setPiecesPerPlayer(raw);
                 }}
-                style={{ width: 60, marginLeft: 8 }}
+                style={{
+                  width: "clamp(3rem, 8vw, 5rem)",
+                  marginLeft: "1rem",
+                  fontSize: "inherit",
+                }}
               />
             </label>
-          </div>
-          <button type="submit">Start Setup Phase</button>
-        </form>
+
+            <button
+              type="submit"
+              style={{
+                padding: "clamp(0.5rem, 2vh, 1rem)",
+                fontSize: "clamp(1rem, 3vh, 1.5rem)",
+                width: "100%",
+                borderRadius: "8px",
+              }}
+            >
+              Start Setup
+            </button>
+          </form>
+        </div>
       </main>
     );
   }
@@ -586,35 +631,72 @@ function App() {
     return (
       <main className="container">
         <BouncingImages />
-        <h1>Wall Go Setup</h1>
-        <div style={{ marginTop: 0 }}>
-          <h2>Setup Phase</h2>
-          <div style={{ marginBottom: 0 }}>
-            Current Player: <span style={{ color: PLAYER_COLORS[setupTurn], fontWeight: "bold" }}>{PLAYER_NAMES[setupTurn]}</span>
-          </div>
-          {/* Tokens left per player - now directly under the board */}
-          <div style={{ marginTop: 16 }}>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-              <div style={{
-                  marginTop: 0,
-                  display: "inline-block",
-                  marginRight: "16px",
-                }}
-                >Tokens Left:</div>
-              {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
-                <li
-                  key={name}
-                  style={{
-                    color: PLAYER_COLORS[idx],
-                    fontWeight: "bold",
+        {/* Reset Button */}
+        <form
+            onSubmit={handleReset}
+            style={{
+              width: "clamp(5rem, 15vw, 10rem)",
+              height: "10vh",
+              backgroundColor: "rgba(0, 0, 0, 0.05)",
+              borderRadius: "8px",
+              top: "1vh",
+              left: "1vw",
+              zIndex: 20,
+              position: "absolute",
+            }}
+          >
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "clamp(1rem, 3vh, 10rem)",
+              }}
+            >
+              Back
+            </button>
+          </form>
+        <div className="container-rounded-bordered"
+          style={{
+                width: "40vw",
+                height: "clamp(0rem, 28vh, 13rem)",
+                marginRight: "auto",
+                marginLeft: "auto",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",           
+              }}
+        >
+          <h1>Wall Go Setup</h1>
+          <div style={{ marginTop: 0 }}>
+            <h2>Setup Phase</h2>
+            <div style={{ marginBottom: 0 }}>
+              Current Player: <span style={{ color: PLAYER_COLORS[setupTurn], fontWeight: "bold" }}>{PLAYER_NAMES[setupTurn]}</span>
+            </div>
+            {/* Tokens left per player - now directly under the board */}
+            <div style={{ marginTop: 16 }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                <div style={{
+                    marginTop: 0,
                     display: "inline-block",
                     marginRight: "16px",
                   }}
-                >
-                  {name}: {setupTokens[idx]}
-                </li>
-              ))}
-            </ul>
+                  >Tokens Left:</div>
+                {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
+                  <li
+                    key={name}
+                    style={{
+                      color: PLAYER_COLORS[idx],
+                      fontWeight: "bold",
+                      display: "inline-block",
+                      marginRight: "16px",
+                    }}
+                  >
+                    {name}: {setupTokens[idx]}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div
             style={{
@@ -713,10 +795,6 @@ function App() {
               </svg>
             </div>
           </div>
-        </div>
-        {/* Reset Button */}
-        <div style={{ marginBottom: 24 }}>
-          <button onClick={handleReset}>Reset Game</button>
         </div>
       </main>
     );
@@ -906,8 +984,6 @@ function App() {
                             selectablePieces[`${rowIdx},${colIdx}`]
                           ) {
                             setMovePath([{ row: rowIdx, col: colIdx }]);
-                            setSelectedRow(rowIdx);
-                            setSelectedCol(colIdx);
                           }
                         }}
                       />
