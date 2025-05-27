@@ -18,22 +18,22 @@ import init, {
 const PLAYER_COLORS = ["#2ecc40", "#0074d9", "#ff4136", "#ffd700"];
 const PLAYER_NAMES = ["Green", "Blue", "Red", "Yellow"];
 const PLAYER_IMAGES = [
-  "/piece_green.png",
-  "/piece_blue.png",
-  "/piece_red.png",
-  "/piece_yellow.png"
+  process.env.PUBLIC_URL + "/piece_green.png",
+  process.env.PUBLIC_URL + "/piece_blue.png",
+  process.env.PUBLIC_URL + "/piece_red.png",
+  process.env.PUBLIC_URL + "/piece_yellow.png"
 ];
 const WALL_IMAGES_H = [
-  "/wall_green_h.png",
-  "/wall_blue_h.png",
-  "/wall_red_h.png",
-  "/wall_yellow_h.png"
+  process.env.PUBLIC_URL + "/wall_green_h.png",
+  process.env.PUBLIC_URL + "/wall_blue_h.png",
+  process.env.PUBLIC_URL + "/wall_red_h.png",
+  process.env.PUBLIC_URL + "/wall_yellow_h.png"
 ];
 const WALL_IMAGES_V = [
-  "/wall_green_v.png",
-  "/wall_blue_v.png",
-  "/wall_red_v.png",
-  "/wall_yellow_v.png"
+  process.env.PUBLIC_URL + "/wall_green_v.png",
+  process.env.PUBLIC_URL + "/wall_blue_v.png",
+  process.env.PUBLIC_URL + "/wall_red_v.png",
+  process.env.PUBLIC_URL + "/wall_yellow_v.png"
 ];
 const BOARD_DIM = 70; // Board cell size in px (change as desired)
 
@@ -356,24 +356,6 @@ function App() {
               }}
             >
               <div style={{ position: "relative", display: "inline-block" }}>
-                {/* Table background image */}
-                <img
-                  src="/wood_table.jpg"
-                  alt="background"
-                  style={{
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                    width: boardSize * BOARD_DIM,
-                    height: boardSize * BOARD_DIM,
-                    objectFit: "cover",
-                    borderRadius: 8,
-                    zIndex: 0,
-                    pointerEvents: "none",
-                    userSelect: "none",
-                  }}
-                  draggable={false}
-                />
                 {/* Board SVG */}
                 <svg
                   width={boardSize * BOARD_DIM}
@@ -385,7 +367,7 @@ function App() {
                     rowArr.map((_, colIdx) => (
                       <image
                         key={`cell-bg-${rowIdx}-${colIdx}`}
-                        href="/boardcell.png"
+                        href={process.env.PUBLIC_URL + "/boardcell.png"}
                         x={colIdx * BOARD_DIM}
                         y={rowIdx * BOARD_DIM}
                         width={BOARD_DIM}
@@ -562,24 +544,6 @@ function App() {
                 borderRadius: 8,
               }}
             >
-              {/* Background image */}
-              <img
-                src="/playing_board.png" // or your image URL
-                alt="background"
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  width: boardSize * BOARD_DIM,
-                  height: boardSize * BOARD_DIM,
-                  objectFit: "cover",
-                  borderRadius: 8,
-                  zIndex: 0,
-                  pointerEvents: "none",
-                  userSelect: "none",
-                }}
-                draggable={false}
-              />
               <svg
                 width={boardSize * BOARD_DIM}
                 height={boardSize * BOARD_DIM}
@@ -601,7 +565,7 @@ function App() {
                     rowArr.map((_, colIdx) => (
                       <image
                         key={`cell-bg-${rowIdx}-${colIdx}`}
-                        href="/boardcell.png"
+                        href={process.env.PUBLIC_URL + "/boardcell.png"}
                         x={colIdx * BOARD_DIM}
                         y={rowIdx * BOARD_DIM}
                         width={BOARD_DIM}

@@ -2,7 +2,7 @@
   "name": "wall-go-wasm",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://3alee.github.io/Wall-Go-WASM",
+  "homepage": "https://3alee.github.io/wall-go-wasm",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
