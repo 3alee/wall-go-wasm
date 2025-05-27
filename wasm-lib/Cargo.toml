@@ -1,0 +1,13 @@
+[package]
+name = "wasm-lib"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+once_cell = "1.21.3"
+serde = "1.0.219"
+serde-wasm-bindgen = "0.6.5"
+wasm-bindgen = "0.2.78"
+
+[lib]
+crate-type = ["cdylib", "rlib"]

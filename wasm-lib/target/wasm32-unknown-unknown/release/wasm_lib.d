@@ -1,0 +1,1 @@
+/Users/ethanlee/Desktop/Non-School/coding/tauri/wall\ go/wall_go_wasm/wasm-lib/target/wasm32-unknown-unknown/release/wasm_lib.wasm: /Users/ethanlee/Desktop/Non-School/coding/tauri/wall\ go/wall_go_wasm/wasm-lib/src/lib.rs
