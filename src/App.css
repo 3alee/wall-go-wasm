@@ -21,6 +21,19 @@
   -webkit-text-size-adjust: 100%;
 }
 
+.board-container {
+  width: 90vmin;
+  height: 90vmin;
+  aspect-ratio: 1 / 1;
+  display: inline-block;
+  border: 2px solid #333;
+  background: #fff;
+  margin-bottom: 16px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+}
+
 .container {
   margin: 0;
   padding-top: 10vh;
