@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/wall-go-wasm/static/css/main.8eeff297.css",
-    "main.js": "/wall-go-wasm/static/js/main.5cd7c607.js",
+    "main.css": "/wall-go-wasm/static/css/main.47b198aa.css",
+    "main.js": "/wall-go-wasm/static/js/main.ada36e83.js",
     "static/js/453.47d267a4.chunk.js": "/wall-go-wasm/static/js/453.47d267a4.chunk.js",
     "static/media/wasm_lib_bg.wasm": "/wall-go-wasm/static/media/wasm_lib_bg.057a45c856ef79bcb1ff.wasm",
     "index.html": "/wall-go-wasm/index.html",
-    "main.8eeff297.css.map": "/wall-go-wasm/static/css/main.8eeff297.css.map",
-    "main.5cd7c607.js.map": "/wall-go-wasm/static/js/main.5cd7c607.js.map",
+    "main.47b198aa.css.map": "/wall-go-wasm/static/css/main.47b198aa.css.map",
+    "main.ada36e83.js.map": "/wall-go-wasm/static/js/main.ada36e83.js.map",
     "453.47d267a4.chunk.js.map": "/wall-go-wasm/static/js/453.47d267a4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.8eeff297.css",
-    "static/js/main.5cd7c607.js"
+    "static/css/main.47b198aa.css",
+    "static/js/main.ada36e83.js"
   ]
 }
