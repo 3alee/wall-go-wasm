@@ -63,7 +63,6 @@ function App() {
   const [showRules, setShowRules] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [setup, setSetup] = useState(false);
-  const [tokens, setTokens] = useState(getDefaultTokens(2, 2));
   const [setupTokens, setSetupTokens] = useState(getDefaultTokens(2, 2));
   const [setupTurn, setSetupTurn] = useState(0);
   const [setupDirection, setSetupDirection] = useState(1);
@@ -91,7 +90,6 @@ function App() {
     setPhase(state.phase === "Setup" ? "setup" : "main");
     if (typeof state.num_players === 'number') setNumPlayers(state.num_players);
     if (typeof state.pieces_per_player === 'number') setPiecesPerPlayer(String(state.pieces_per_player));
-    if (state.tokens) setTokens(state.tokens);
     if (state.move_path && state.move_path.length > 0) {
       const [row, col] = state.move_path[state.move_path.length - 1];
       setLastMoved({ row, col });
@@ -201,7 +199,6 @@ function App() {
     setBoardSize(String(size));
     setPiecesPerPlayer(String(pieces));
     setBoard(Array(size).fill(null).map(() => Array(size).fill(null)));
-    setTokens(getDefaultTokens(numPlayers, pieces));
     setSetupTokens(getDefaultTokens(numPlayers, pieces));
     setSetupTurn(0);
     setSetupDirection(1);
@@ -328,6 +325,7 @@ function App() {
               marginTop: "clamp(2.7rem, 5vh, 4rem)",
               backgroundColor: "rgba(0, 0, 0, 0.05)",
               borderRadius: "8px",
+              boxSizing: "border-box",
             }}
           >
             <button
@@ -556,7 +554,6 @@ function App() {
                 onChange={(e) => {
                   const n = parseInt(e.target.value, 10);
                   setNumPlayers(n);
-                  setTokens(getDefaultTokens(n, Number(piecesPerPlayer) || 1));
                   setSetupTokens(getDefaultTokens(n, Number(piecesPerPlayer) || 1));
                 }}
                 style={{
@@ -616,7 +613,6 @@ function App() {
       (async () => {
         setSetup(false);
         const val = Math.max(1, Math.min(size, parseInt(piecesPerPlayer, 10) || 1));
-        setTokens(getDefaultTokens(numPlayers, val));
         setLoading(true);
         const rustBoard = board.map(row => row.map(cell => (cell === null ? null : cell)));
         let nextPlayer = setupDirection === 1 ? 0 : numPlayers - 1;
@@ -634,54 +630,70 @@ function App() {
         {/* Reset Button */}
         <form
             onSubmit={handleReset}
+          style={{
+            width: "clamp(5rem, 15vw, 10rem)",
+            height: "10vh",
+            backgroundColor: "rgba(0, 0, 0, 0.05)",
+            borderRadius: "8px",
+            top: "1vh",
+            left: "1vw",
+            zIndex: 20,
+            position: "absolute",
+          }}
+        >
+          <button
+            type="submit"
             style={{
-              width: "clamp(5rem, 15vw, 10rem)",
-              height: "10vh",
-              backgroundColor: "rgba(0, 0, 0, 0.05)",
-              borderRadius: "8px",
-              top: "1vh",
-              left: "1vw",
-              zIndex: 20,
-              position: "absolute",
+              width: "100%",
+              padding: "12px",
+              fontSize: "clamp(1rem, 3vh, 10rem)",
             }}
           >
-            <button
-              type="submit"
-              style={{
-                width: "100%",
-                padding: "12px",
-                fontSize: "clamp(1rem, 3vh, 10rem)",
-              }}
-            >
-              Back
-            </button>
-          </form>
-        <div className="container-rounded-bordered"
+            Back
+          </button>
+        </form>
+        <div
+          className="container-rounded-bordered"
           style={{
-                width: "40vw",
-                height: "clamp(0rem, 28vh, 13rem)",
-                marginRight: "auto",
-                marginLeft: "auto",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",           
-              }}
+            width: "clamp(20rem, 40vw, 60rem)",
+            height: "clamp(10rem, 28vh, 15rem)",
+            margin: "5vh auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            border: "2px solid #333",
+            borderRadius: "20px",
+            padding: "clamp(0.5rem, 2vh, 1.5rem)",
+            boxSizing: "border-box",
+            overflow: "auto", // allows scroll if needed on very small screens
+            textAlign: "center",
+          }}
         >
-          <h1>Wall Go Setup</h1>
+          <h1 style={{ fontSize: "clamp(1rem, 4vh, 2rem)" }}>Wall Go Setup</h1>
           <div style={{ marginTop: 0 }}>
-            <h2>Setup Phase</h2>
-            <div style={{ marginBottom: 0 }}>
-              Current Player: <span style={{ color: PLAYER_COLORS[setupTurn], fontWeight: "bold" }}>{PLAYER_NAMES[setupTurn]}</span>
+            <h2 style={{ fontSize: "clamp(0.8rem, 3vh, 1.5rem)", margin: 0 }}>Setup Phase</h2>
+            <div style={{ fontSize: "clamp(0.7rem, 2.5vh, 1.2rem)" }}>
+              Current Player:{" "}
+              <span
+                style={{
+                  color: PLAYER_COLORS[setupTurn],
+                  fontWeight: "bold",
+                }}
+              >
+                {PLAYER_NAMES[setupTurn]}
+              </span>
             </div>
-            {/* Tokens left per player - now directly under the board */}
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: "clamp(0.5rem, 2vh, 1.5rem)" }}>
               <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                <div style={{
-                    marginTop: 0,
+                <div
+                  style={{
                     display: "inline-block",
-                    marginRight: "16px",
+                    marginRight: "clamp(0.5rem, 2vw, 1rem)",
+                    fontSize: "clamp(0.7rem, 2.5vh, 1.2rem)",
                   }}
-                  >Tokens Left:</div>
+                >
+                  Pieces Left:
+                </div>
                 {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
                   <li
                     key={name}
@@ -689,7 +701,8 @@ function App() {
                       color: PLAYER_COLORS[idx],
                       fontWeight: "bold",
                       display: "inline-block",
-                      marginRight: "16px",
+                      marginRight: "clamp(0.5rem, 2vw, 1rem)",
+                      fontSize: "clamp(0.7rem, 2.5vh, 1.2rem)",
                     }}
                   >
                     {name}: {setupTokens[idx]}
@@ -698,102 +711,106 @@ function App() {
               </ul>
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "center",
-              width: "100%",
-              gap: 40,
-              position: "relative",
-            }}
-          >
-            <div className="board-container">
-              <svg
-                width="100%"
-                height="100%"
-                viewBox={`0 0 ${size} ${size}`}
-                style={svgStyle}
-              >
-                {/* Cell backgrounds */}
-                {board.map((rowArr, rowIdx) =>
-                  rowArr.map((_, colIdx) => (
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "center",
+            width: "100%",
+            gap: 40,
+            position: "relative",
+            marginTop: "0vh",
+          }}
+        >
+          <div className="board-container">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox={`0 0 ${size} ${size}`}
+              style={svgStyle}
+            >
+              {/* Cell background images */}
+              {board.map((rowArr, rowIdx) =>
+                rowArr.map((_, colIdx) => (
+                  <image
+                    key={`cell-bg-${rowIdx}-${colIdx}`}
+                    href={process.env.PUBLIC_URL + "/boardcell.png"}
+                    x={colIdx}
+                    y={rowIdx}
+                    width={1}
+                    height={1}
+                    style={{
+                      pointerEvents: "none",
+                      userSelect: "none"
+                    }}
+                  />
+                ))
+              )}
+
+              {/* Setup pieces */}
+              {board.map((rowArr, rowIdx) =>
+                rowArr.map((cell, colIdx) =>
+                  cell !== null ? (
                     <image
-                      key={`cell-bg-${rowIdx}-${colIdx}`}
-                      href={process.env.PUBLIC_URL + "/boardcell.png"}
-                      x={colIdx}
-                      y={rowIdx}
-                      width={1}
-                      height={1}
+                      key={`setup-piece-${rowIdx}-${colIdx}`}
+                      href={PLAYER_IMAGES[cell]}
+                      x={colIdx + 0.15}
+                      y={rowIdx + 0.15}
+                      width={0.7}
+                      height={0.7}
                       style={{
                         pointerEvents: "none",
                         userSelect: "none"
                       }}
                     />
-                  ))
-                )}
+                  ) : null
+                )
+              )}
 
-                {/* Setup pieces */}
-                {board.map((rowArr, rowIdx) =>
-                  rowArr.map((cell, colIdx) =>
-                    cell !== null ? (
-                      <image
-                        key={`setup-piece-${rowIdx}-${colIdx}`}
-                        href={PLAYER_IMAGES[cell]}
-                        x={colIdx + 0.15}
-                        y={rowIdx + 0.15}
-                        width={0.7}
-                        height={0.7}
-                        style={{
-                          pointerEvents: "none",
-                          userSelect: "none"
-                        }}
-                      />
-                    ) : null
-                  )
-                )}
-
-                {/* Highlight available cells for current player */}
-                {board.map((rowArr, rowIdx) =>
-                  rowArr.map((cell, colIdx) =>
-                    cell === null && setupTokens[setupTurn] > 0 ? (
-                      <rect
-                        key={`setup-spot-${rowIdx}-${colIdx}`}
-                        x={colIdx}
-                        y={rowIdx}
-                        width={1}
-                        height={1}
-                        fill="#9a695e"
-                        opacity={0}
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          if (cell !== null || setupTokens[setupTurn] === 0) return;
-                          const new_board = board.map(r => r.slice());
-                          new_board[rowIdx][colIdx] = setupTurn;
-                          setBoard(new_board);
-                          const newTokens = [...setupTokens];
-                          newTokens[setupTurn]--;
-                          setSetupTokens(newTokens);
-                          let next = setupTurn;
-                          let dir = setupDirection;
-                          let found = false;
-                          for (let i = 0; i < numPlayers; i++) {
-                            next += dir;
-                            if (next < 0) { next = 0; dir = 1; }
-                            if (next >= numPlayers) { next = numPlayers - 1; dir = -1; }
-                            if (newTokens[next] > 0) { found = true; break; }
-                          }
-                          if (found) {
-                            setSetupTurn(next);
-                            setSetupDirection(dir);
-                          }
-                        }}
-                      />
-                    ) : null
-                  )
-                )}
-              </svg>
-            </div>
+              {/* Highlight available cells for current player */}
+              {board.map((rowArr, rowIdx) =>
+                rowArr.map((cell, colIdx) =>
+                  cell === null && setupTokens[setupTurn] > 0 ? (
+                    <rect
+                      key={`setup-spot-${rowIdx}-${colIdx}`}
+                      x={colIdx}
+                      y={rowIdx}
+                      width={1}
+                      height={1}
+                      fill="#9a695e"
+                      opacity={0}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (cell !== null || setupTokens[setupTurn] === 0) return;
+                        // Place token for current setupTurn
+                        const new_board = board.map(r => r.slice());
+                        new_board[rowIdx][colIdx] = setupTurn;
+                        setBoard(new_board);
+                        const newTokens = [...setupTokens];
+                        newTokens[setupTurn]--;
+                        setSetupTokens(newTokens);
+                        // Find next player with tokens
+                        let next = setupTurn;
+                        let dir = setupDirection;
+                        let found = false;
+                        for (let i = 0; i < numPlayers; i++) {
+                          next += dir;
+                          if (next < 0) { next = 0; dir = 1; }
+                          if (next >= numPlayers) { next = numPlayers - 1; dir = -1; }
+                          if (newTokens[next] > 0) { found = true; break; }
+                        }
+                        if (found) {
+                          setSetupTurn(next);
+                          setSetupDirection(dir);
+                        }
+                      }}
+                    />
+                  ) : null
+                )
+              )}
+            </svg>
           </div>
         </div>
       </main>
@@ -805,76 +822,111 @@ function App() {
   return (
     <main className="container">
       <BouncingImages />
-      <h1>Wall Go</h1>
+      {/* Reset Button */}
+      <form
+        onSubmit={handleReset}
+        style={{
+          width: "clamp(5rem, 15vw, 10rem)",
+          height: "10vh",
+          backgroundColor: "rgba(0, 0, 0, 0.05)",
+          borderRadius: "8px",
+          top: "1vh",
+          left: "1vw",
+          zIndex: 20,
+          position: "absolute",
+        }}
+      >
+        <button
+          type="submit"
+          style={{
+            width: "100%",
+            padding: "12px",
+            fontSize: "clamp(1rem, 3vh, 10rem)",
+          }}
+        >
+          Back
+        </button>
+      </form>
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div style={{ marginTop: 0 }}>
-          <h2>Main Phase</h2>
-          <div style={{ marginBottom: 0 }}>
-            {winner == null ? (
-              <span>
-                Current Player:{" "}
-                <span
-                  style={{
-                    color: PLAYER_COLORS[currentPlayer],
-                    fontWeight: "bold",
-                  }}
-                >
-                  {PLAYER_NAMES[currentPlayer]}
-                </span>
-              </span>
-            ) : (
-              <span>
-                Winner:{" "}
-                <span
-                  style={{
-                    color: PLAYER_COLORS[winner],
-                    fontWeight: "bold",
-                  }}
-                >
-                  {PLAYER_NAMES[winner]}
-                </span>
-              </span>
-            )}
-          </div>
-          {/* Final Scores Panel */}
-          {winner != null && (
-            <div
-              style={{
-                width: "90vmin",
-                display: "inline-block",
-                background: "#fff",
-                border: "2px solid #333",
-                borderRadius: 8,
-                padding: "16px 20px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                marginLeft: 0,
-              }}
-            >
-              <h3 style={{ marginTop: 0 }}>Final Scores</h3>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
-                  <li
-                    key={name}
+        <div>
+          <div
+            className="container-rounded-bordered"
+            style={{
+              width: "clamp(20rem, 40vw, 60rem)",
+              height: "clamp(13rem, 28vh, 15rem)",
+              margin: "5vh auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              border: "2px solid #333",
+              borderRadius: "20px",
+              padding: "clamp(0.5rem, 2vh, 1.5rem)",
+              boxSizing: "border-box",
+              overflow: "auto", // allows scroll if needed on very small screens
+              textAlign: "center",
+            }}
+          >
+            <h1 style={{ fontSize: "clamp(1rem, 4vh, 2rem)" }}>Wall Go</h1>
+            <h2 style={{ fontSize: "clamp(0.8rem, 3vh, 1.5rem)", margin: 0 }}>Main Phase</h2>
+            <div style={{ marginTop: 0 }}>
+              {winner == null ? (
+                <div style={{ fontSize: "clamp(0.7rem, 2.5vh, 1.2rem)" }}>
+                  Current Player:{" "}
+                  <span
                     style={{
-                      color: PLAYER_COLORS[idx],
+                      color: PLAYER_COLORS[currentPlayer],
                       fontWeight: "bold",
-                      marginBottom: 8,
                     }}
                   >
-                    {name}: {regionScores[idx] ?? 0}
-                  </li>
-                ))}
-              </ul>
+                    {PLAYER_NAMES[currentPlayer]}
+                  </span>
+                </div>
+              ) : (
+                <div style={{ fontSize: "clamp(0.7rem, 2.5vh, 1.2rem)" }}>
+                  Winner:{" "}
+                  <span
+                    style={{
+                      color: PLAYER_COLORS[winner],
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {PLAYER_NAMES[winner]}
+                  </span>
+                </div>
+              )}
             </div>
-          )}
-          <div style={{ margin: "12px 0", fontWeight: "bold", fontSize: 18 }}>
-            {winner != null ? null :
-              wallPending ? "Place a wall" :
-              movePath.length === 1 ? "Move to a square" :
-              "Select a piece to move"
-            }
+            {/* Final Scores Panel */}
+            {winner != null && (
+              <div>
+                <h3 style={{ fontSize: "clamp(0.6rem, 2vh, 1.5rem)" }}>Final Scores</h3>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                  {PLAYER_NAMES.slice(0, numPlayers).map((name, idx) => (
+                    <li
+                      key={name}
+                      style={{
+                        color: PLAYER_COLORS[idx],
+                        fontWeight: "bold",
+                        marginBottom: 8,
+                        fontSize: "clamp(0.6rem, 2vh, 1.5rem)",
+                        display: "inline-block",
+                        marginRight: "clamp(0.5rem, 2vw, 1rem)",
+                      }}
+                    >
+                      {name}: {regionScores[idx] ?? 0}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className={"fade-anim"} style={{ fontSize: "clamp(0.7rem, 2.5vh, 1.2rem)", fontWeight: "bold", marginTop: "1vh" }}>
+              {winner != null ? null :
+                wallPending ? "Place a wall" :
+                movePath.length === 1 ? "Move to a square" :
+                "Select a piece to move"
+              }
+            </div>
           </div>
           <div
             style={{
