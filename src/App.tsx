@@ -485,6 +485,31 @@ function App() {
     return (
       <main className="container">
         <BouncingImages />
+        {/* Reset Button */}
+        <form
+          onSubmit={handleReset}
+          style={{
+            width: "clamp(5rem, 15vw, 10rem)",
+            height: "10vh",
+            backgroundColor: "rgba(0, 0, 0, 0.05)",
+            borderRadius: "8px",
+            top: "1vh",
+            left: "1vw",
+            zIndex: 20,
+            position: "absolute",
+          }}
+        >
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              padding: "12px",
+              fontSize: "clamp(1rem, 3vh, 10rem)",
+            }}
+          >
+            Menu
+          </button>
+        </form>
         <div
           className="container-rounded-bordered"
           style={{
@@ -649,7 +674,7 @@ function App() {
               fontSize: "clamp(1rem, 3vh, 10rem)",
             }}
           >
-            Back
+            Menu
           </button>
         </form>
         <div
@@ -844,7 +869,7 @@ function App() {
             fontSize: "clamp(1rem, 3vh, 10rem)",
           }}
         >
-          Back
+          Menu
         </button>
       </form>
       {loading ? (
@@ -1164,9 +1189,6 @@ function App() {
                   )}
               </svg>
             </div>
-          </div>
-          <div style={{ marginBottom: 24 }}>
-            <button onClick={handleReset}>Reset Game</button>
           </div>
         </div>
       )}
